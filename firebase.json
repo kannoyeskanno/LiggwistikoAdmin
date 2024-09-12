@@ -1,0 +1,11 @@
+{
+  "hosting": {
+    "public": "build",
+    "site": "testlinggwistiko2",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}

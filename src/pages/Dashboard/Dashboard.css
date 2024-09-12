@@ -1,0 +1,83 @@
+.dashboard-container {
+    padding: 20px;
+  }
+  
+  .dropdown {
+    margin-bottom: 20px;
+    padding: 10px;
+    font-size: 16px;
+    width: 100%; 
+  }
+  
+  .table-container {
+    max-height: 400px; 
+    overflow-y: auto; 
+  }
+  
+  .contribution-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed; 
+  }
+  
+  .contribution-table th,
+  .contribution-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+    word-wrap: break-word; 
+    
+    min-width: 120px; 
+  }
+  
+  .contribution-table th {
+    background-color: #f4f4f4;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+  
+  .contribution-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .contribution-table tr:nth-child(odd) {
+    background-color: #fff;
+  }
+  
+  .filter-container {
+    margin-bottom: 20px;
+  }
+  
+  .filter-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap; 
+  }
+  
+  .filter-group label {
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .filter-group input {
+    margin-right: 5px;
+  }
+  
+
+  .export-button {
+    padding: 10px 20px;
+    margin-right: 10px;
+    background-color: #4CAF50; 
+    color: white; 
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .export-button:hover {
+    background-color: #45a049; 
+  }
+  
