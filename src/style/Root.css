@@ -1,0 +1,13 @@
+:root {
+    --body-color: #e4e9f7;
+    --sidebar-color: #fff;
+    --primary-color: #695cfe;
+    --primary-color-light: #f6f5ff;
+    --toggle-color: #ddd;
+    --text-color: #707070;
+    --tran-duration: all 0.5s ease;
+  }
+  
+  body {
+    background: var(--body-color);
+  }

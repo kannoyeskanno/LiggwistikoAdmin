@@ -1,0 +1,42 @@
+.toolbar-profile {
+  display: flex;
+  align-items: center;
+}
+
+.profile-image {
+  width: 2rem; 
+  height: 2rem;
+  border-radius: 50%; 
+  overflow: hidden; 
+  border: 2px solid #ddd; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+}
+
+.profile-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-name {
+  font-weight: bold;
+  color: #333; 
+  font-size: 1rem;
+}
+
+.profile-position {
+  color: #666; 
+  font-size: .8rem;
+}
+
+.dropdown-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 24px; 
+  color: #333; 
+  margin-left: -10px; 
+}
+
+

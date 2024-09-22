@@ -1,0 +1,97 @@
+.circular-button-container {
+    display: flex;
+    justify-content: center;
+    gap: 0.8rem;
+    margin: 20px 0;
+    border-left: 2px solid rgb(141, 141, 141); 
+    border-right: 2px solid rgb(141, 141, 141); 
+    padding: 0 1rem 0 1rem;
+  }
+  
+  .circular-button {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background-color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+
+  .circular-button.report{
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background-color: #f5b7b1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+
+  .circular-button i.report {
+    font-size: 24px;
+    color: #ec7063;
+  }
+
+  .circular-button.help{
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background-color: #a3e4d7 ;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+
+  .circular-button i.help {
+    font-size: 24px;
+    color: #48c9b0 ;
+  }
+  
+  
+  .circular-button:hover {
+    background-color: #555;
+    transform: scale(1.1); 
+  }
+  
+  .circular-button:active {
+    transform: scale(0.95); /* Button press effect */
+  }
+  
+
+
+  .circular-button {
+    position: relative; /* Set relative positioning to position the dot */
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    padding: 10px;
+  }
+  
+  .circular-button .report {
+    font-size: 24px;
+    color: rgb(218, 106, 106);
+  }
+  
+  .notification-dot {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 8px;
+    height: 8px;
+    background-color: red;
+    border-radius: 50%;
+    border: 2px solid white; /* Optional, to give it a border to stand out */
+  }
+  
+  
+  

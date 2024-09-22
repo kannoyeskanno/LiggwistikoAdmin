@@ -1,0 +1,37 @@
+.analytics-container {
+  padding: 0;
+  max-width: 100%;
+  font-family: Arial, sans-serif;
+  margin-top: 8vh;
+  height: 92vh;
+}
+
+.top-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.metrics-container {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.metric {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 10px;
+  flex: 1 1 200px;
+  text-align: center;
+}
+
+.metric h2 {
+  margin-bottom: 10px;
+}
+
+.metric p {
+  font-size: 24px;
+  font-weight: bold;
+}

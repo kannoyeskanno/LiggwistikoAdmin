@@ -3,7 +3,7 @@ import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
 import { db } from '../../firebase';  
 import { Shimmer } from 'react-shimmer'; 
 import * as XLSX from 'xlsx'; 
-import './Dashboard.css'; 
+import './ContributionManagement.css'; 
 import UserCount from '../../components/UserCount/UserCount';
 
 const languagePairs = [
@@ -36,7 +36,7 @@ const languagePairs = [
 
 const FIXED_ROWS = 10; 
 
-const Dashboard = () => {
+const ContributionManagement = () => {
   const [contributions, setContributions] = useState([]);
   const [selectedLanguagePair, setSelectedLanguagePair] = useState('');
   const [loading, setLoading] = useState(false);
@@ -289,4 +289,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default ContributionManagement;
