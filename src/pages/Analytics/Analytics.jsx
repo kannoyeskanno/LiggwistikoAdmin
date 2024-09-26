@@ -2,7 +2,6 @@ import React from 'react';
 import './Analytics.css';
 
 const Analytics = () => {
-  // Sample data for demonstration purposes
   const userCount = 150;
   const contributionCount = 75;
   const activeUsers = 120;

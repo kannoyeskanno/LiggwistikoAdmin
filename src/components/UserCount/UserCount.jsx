@@ -9,7 +9,7 @@ const UserCount = () => {
   useEffect(() => {
     const fetchUserCount = async () => {
       try {
-        const response = await axios.get('/user-count'); // Your backend endpoint
+        const response = await axios.get('/user-count'); 
         setUserCount(response.data.userCount);
       } catch (err) {
         setError('Error fetching user count');

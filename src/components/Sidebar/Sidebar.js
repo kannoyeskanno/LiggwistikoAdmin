@@ -130,7 +130,7 @@ function Sidebar() {
                 <span className="text nav-text">Comments</span>
               </Link>
             </li>
-
+{/* 
             <li
               className={`nav-link ${
                 location.pathname === "/analytics" ? "active" : ""
@@ -140,20 +140,9 @@ function Sidebar() {
                 <i className="material-symbols-outlined icon">analytics</i>
                 <span className="text nav-text">Analytics</span>
               </Link>
-            </li>
+            </li> */}
 
-            <li
-              className={`nav-link ${
-                location.pathname === "/announcements" ? "active" : ""
-              }`}
-            >
-              <Link to="/announcements">
-                <i className="material-symbols-outlined icon">settings</i>
-               
-
-                <span className="text nav-text">Announcements</span>
-              </Link>
-            </li>
+          
           </ul>
         </div>
       </div>

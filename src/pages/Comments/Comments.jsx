@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
-import { db } from "../../firebase"; // Adjust the path to your firebase config
+import { db } from "../../firebase";
+import Toast from "react-bootstrap/Toast";
+
 import "./Comments.css";
-import { Popover, OverlayTrigger } from 'react-bootstrap';
-import Tooltip from 'react-bootstrap/Tooltip';
-
-
+import { Popover, OverlayTrigger } from "react-bootstrap";
+import Tooltip from "react-bootstrap/Tooltip";
+import Card from "react-bootstrap/Card"; 
 
 const languagePairs = [
   "Cam Norte-Filipino",
@@ -28,11 +29,14 @@ const Comments = () => {
   const [selectedContribution, setSelectedContribution] = useState(null);
   const [comments, setComments] = useState([]);
   const [loadingComments, setLoadingComments] = useState(false);
+  const [showPopover, setShowPopover] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
   useEffect(() => {
     const fetchAllContributions = async () => {
       const statusUpdates = {};
-    
+
       for (const pair of languagePairs) {
         try {
           const contributionsRef = collection(
@@ -42,12 +46,12 @@ const Comments = () => {
             "contributions"
           );
           const contributionsSnapshot = await getDocs(contributionsRef);
-    
+
           if (!contributionsSnapshot.empty) {
             for (const contributionDoc of contributionsSnapshot.docs) {
               const contributionId = contributionDoc.id;
               const documentId = pair;
-    
+
               try {
                 const translationRef = doc(
                   db,
@@ -57,16 +61,16 @@ const Comments = () => {
                   contributionId
                 );
                 const translationSnap = await getDoc(translationRef);
-    
+
                 if (translationSnap.exists()) {
-                  // Fetch the "reason" field
-                  const reason = contributionDoc.data().reason || "No reason provided";
-    
+                  const reason =
+                    contributionDoc.data().reason || "No reason provided";
+
                   statusUpdates[`${pair} - ${contributionId}`] = {
                     status: "Translation fetched",
                     documentId,
                     contributionId,
-                    reason,  // Add the reason field
+                    reason, 
                     data: translationSnap.data(),
                   };
                 } else {
@@ -93,38 +97,38 @@ const Comments = () => {
           };
         }
       }
-    
+
       setStatuses(statusUpdates);
       setLoading(false);
     };
-    
 
     fetchAllContributions();
   }, []);
 
-
-  const [showPopover, setShowPopover] = useState(false);
-
-  const handleToggle = () => {
-    setShowPopover(!showPopover);
+  const handleOptionClick = (message) => {
+    setToastMessage(message);
+    setShowToast(true);
+    setShowPopover(false); 
   };
 
+ 
   const popover = (
     <Popover id="popover-basic">
-      <Popover.Header as="h3">More options</Popover.Header>
+      <Popover.Header as="h3">Popover Title</Popover.Header>
       <Popover.Body>
+        <button onClick={() => handleOptionClick("Option 1 clicked")}>Option 1</button>
+        <button onClick={() => handleOptionClick("Option 2 clicked")}>Option 2</button>
       </Popover.Body>
     </Popover>
   );
 
   const reasonIcons = {
-    Abuse: "block",       
-    Fake: "warning",      
-    Spam: "delete",       
-    Harassment: "gavel",  
-    Other: "help_outline", 
+    Abuse: "block",
+    Fake: "warning",
+    Spam: "delete",
+    Harassment: "gavel",
+    Other: "help_outline",
   };
-  
 
   const fetchComments = async (documentId, contributionId) => {
     setLoadingComments(true);
@@ -149,13 +153,13 @@ const Comments = () => {
   const handleCardClick = (key) => {
     setSelectedContribution(statuses[key]);
     const { documentId, contributionId } = statuses[key];
-    fetchComments(documentId, contributionId); 
+    fetchComments(documentId, contributionId);
   };
 
   return (
     <div className="comment-container">
-      <div className="top-container">
-        <h1>Contributions Status</h1>
+      <div className="top-container-comment">
+        <h1>Reported Contributions</h1>
       </div>
       <div className="content-container">
         <div className="left-section">
@@ -165,37 +169,82 @@ const Comments = () => {
               <div className="contribution-card">
                 <div className="contribution-upper">
                   <div className="profile-section">
-                    <i className="material-symbols-outlined profile-icon">person</i>
+                    <div className="profile-img">
+                    <i className="material-symbols-outlined profile-icon">
+                      person
+                    </i>
+                    </div>
+                 
 
                     <div className="user-details">
-                      <p className="email-text">{selectedContribution.data.user_email}</p>
+                      <p className="email-text">
+                        {selectedContribution.data.user_email}
+                      </p>
                       <p className="timestamp">
-                        {new Date(selectedContribution.data.timestamp.seconds * 1000).toLocaleString()}
+                        {new Date(
+                          selectedContribution.data.timestamp.seconds * 1000
+                        ).toLocaleString()}
                       </p>
                     </div>
                   </div>
-
                   <div className="status-section">
                     <i
-                      className={`material-symbols-outlined profile-icon ${selectedContribution.data.verified ? "verified" : "not-verified"}`}
+                      className={`material-symbols-outlined profile-icon-main${
+                        selectedContribution.data.verified
+                          ? "verified"
+                          : "not-verified"
+                      }`}
                     >
                       verified
                     </i>
                     <i
-                      className={`material-symbols-outlined profile-icon ${selectedContribution.data.approved ? "approved" : "not-approved"}`}
+                      className={`material-symbols-outlined profile-icon ${
+                        selectedContribution.data.approved
+                          ? "approved"
+                          : "not-approved"
+                      }`}
                     >
                       recommend
                     </i>
-                    <OverlayTrigger
-      trigger="click"
-      placement="top"
-      overlay={popover}
-      show={showPopover}
-      onToggle={handleToggle}
-    >
-      <i className="material-symbols-outlined profile-icon" onClick={handleToggle}>more_horiz</i>
-    </OverlayTrigger>
-                    <i className="material-symbols-outlined profile-icon">more_horiz</i>
+
+                    <div>
+                      <OverlayTrigger
+                        trigger="click"
+                        placement="right"
+                        overlay={popover}
+                      >
+                        <i className="material-symbols-outlined profile-icon">
+                          more_horiz
+                        </i>
+                      </OverlayTrigger>
+                      <div className="toast-container">
+                        <Toast
+                          onClose={() => setShowToast(false)}
+                          show={showToast}
+                          delay={3000}
+                          autohide
+                        >
+                          <Toast.Header>
+                            <img src="..." className="rounded me-2" alt="..." />
+                            <strong className="me-auto">
+                              Bootstrap{" "}
+                              {selectedContribution.data.contribution_id}
+                            </strong>
+                            <small>Just now</small>
+                            <button
+                              type="button"
+                              className="btn-close"
+                              data-bs-dismiss="toast"
+                              aria-label="Close"
+                            ></button>
+                          </Toast.Header>
+                          <Toast.Body>{toastMessage}</Toast.Body>
+                        </Toast>
+                      </div>
+                    </div>
+                    <i className="material-symbols-outlined profile-icon">
+                      more_horiz
+                    </i>
                   </div>
                 </div>
 
@@ -214,7 +263,10 @@ const Comments = () => {
                   </p>
                   {selectedContribution.data.image_url && (
                     <div className="image-container">
-                      <img src={selectedContribution.data.image_url} alt="Contribution" />
+                      <img
+                        src={selectedContribution.data.image_url}
+                        alt="Contribution"
+                      />
                     </div>
                   )}
                 </div>
@@ -229,35 +281,37 @@ const Comments = () => {
             <p>Loading comments...</p>
           ) : (
             <div className="comments-container">
-              {comments.map((comment) => (
-                <div className="comment-card" key={comment.comment_id}>
-                  <p>
-                    <strong>User:</strong> {comment.user_email}
-                  </p>
-                  <p>
-                    <strong>Comment:</strong> {comment.comment}
-                  </p>
-                  <p>
-                    <strong>Contributed Text:</strong>{" "}
-                    {comment.contributed_text}
-                  </p>
-                  <p>
-                    <strong>Rating:</strong> {comment.rating}
-                  </p>
-                  <p>
-                    <strong>Document ID:</strong> {comment.document_id}
-                  </p>
-                  <p>
-                    <strong>Contribution ID:</strong> {comment.contribution_id}
-                  </p>
-                  <p>
-                    <strong>Timestamp:</strong>{" "}
-                    {new Date(comment.timestamp).toLocaleString()}
-                  </p>
-                </div>
-              ))}
-              {comments.length === 0 && <p>No comments available.</p>}
-            </div>
+  {loadingComments ? (
+    <p>Loading comments...</p>
+  ) : (
+    comments.length > 0 ? (
+      comments.map((comment) => (
+        <Card className="comment-card mb-3" key={comment.comment_id}>
+          <Card.Header>
+          <i className="material-symbols-outlined user-icon">person</i>
+            {comment.user_email}</Card.Header>
+          <Card.Body>
+            <blockquote className="blockquote mb-0">
+              <p>
+              {comment.comment}
+              </p>
+              <p>
+                {comment.rating}
+              </p>
+            
+              <footer className="blockquote-footer">
+                {new Date(comment.timestamp).toLocaleString()}
+              </footer>
+            </blockquote>
+          </Card.Body>
+        </Card>
+      ))
+    ) : (
+      <p>No comments available.</p>
+    )
+  )}
+</div>
+
           )}
         </div>
 
@@ -275,19 +329,27 @@ const Comments = () => {
                 }
 
                 return (
-                  <li className="list-group-item" key={key} onClick={() => handleCardClick(key)}>
+                  <li
+                    className="list-group-item item-right"
+                    key={key}
+                    onClick={() => handleCardClick(key)}
+                  >
                     <div className="upper-card">
                       <div className="profile-container">
-                        <i className="material-symbols-outlined profile-icon">person</i>
+                        <i className="material-symbols-outlined profile-icon">
+                          person
+                        </i>
                       </div>
-                  
+
                       <div className="details">
                         <p className="email-text">{data.user_email}</p>
                         <p className="timestamp">
-                          {new Date(data.timestamp.seconds * 1000).toLocaleString()}
+                          {new Date(
+                            data.timestamp.seconds * 1000
+                          ).toLocaleString()}
                         </p>
                       </div>
-                  
+
                       <OverlayTrigger
                         placement="left"
                         overlay={
@@ -301,12 +363,21 @@ const Comments = () => {
                         </i>
                       </OverlayTrigger>
                     </div>
-                  
+
                     <div className="lower-card">
-                      <p>Correction Submitted: <strong>{data.contributed_text}</strong></p>
-                      <p>Translated output: <strong>{data.output_main}</strong></p>
-                      <p>Input: <strong>{data.input_main}</strong></p>
-                      <p><strong>Reason:</strong> {statuses[key].reason}</p>
+                      <p>
+                        Correction Submitted:{" "}
+                        <strong>{data.contributed_text}</strong>
+                      </p>
+                      <p>
+                        Translated output: <strong>{data.output_main}</strong>
+                      </p>
+                      <p>
+                        Input: <strong>{data.input_main}</strong>
+                      </p>
+                      <p>
+                        <strong>Reason:</strong> {statuses[key].reason}
+                      </p>
                     </div>
                   </li>
                 );
@@ -318,5 +389,4 @@ const Comments = () => {
     </div>
   );
 };
-
 export default Comments;

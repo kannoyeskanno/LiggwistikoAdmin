@@ -12,7 +12,6 @@ import Account from "./pages/AccountManagement/Account";
 
 import Dialect from "./pages/Dialect/Dialect";
 import Analytics from "./pages/Analytics/Analytics";
-import Announcements from "./pages/Announcement/Announcement";
 
 
 import './style/Root.css';
@@ -40,7 +39,6 @@ const App = () => {
                       <Route path="/dialectCategories" element={<Dialect />} />
                       <Route path="/comments" element={<Comments />} />
                       <Route path="/analytics" element={<Analytics />} />
-                      <Route path="/announcements" element={<Announcements />} />
 
                       <Route path="/settings" element={<Settings />} />
 
