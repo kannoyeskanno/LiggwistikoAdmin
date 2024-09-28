@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { getStorage, ref, uploadBytesResumable, getDownloadURL, getMetadata } from "firebase/storage";
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { getDatabase, ref as dbRef, set } from "firebase/database";
 import './Dialect.css';
 import { app } from '../../firebase'; 
@@ -9,7 +9,7 @@ const Dialect = () => {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({ visible: false, message: '', type: '' });
-  const [selectedDialect, setSelectedDialect] = useState('');
+  const [selectedDialect, setSelectedDialect] = useState('Daraga');
   const [progress, setProgress] = useState(0);
   const storage = getStorage(app);
   const database = getDatabase(app);
@@ -27,7 +27,7 @@ const Dialect = () => {
 
   const handleUpload = () => {
     if (!file || !selectedDialect) {
-      alert("Please select a file and a dialect first.");
+      setAlert({ visible: true, message: 'Please select a file and a dialect first.', type: 'danger' });
       return;
     }
 
@@ -63,55 +63,68 @@ const Dialect = () => {
     );
   };
 
-
-
   const handleDialectSelect = (dialect) => setSelectedDialect(dialect);
 
   return (
-    <div className="admin-dashboard">
-      <aside className="sidebar-dialect">
-        <h2>Dialects</h2>
-        <ul className="list-group">
-          {['Daraga', 'Cam Norte', 'English', 'Filipino'].map(dialect => (
-            <li key={dialect}
-                className={`list-group-item ${selectedDialect === dialect ? 'active' : ''}`}
-                onClick={() => handleDialectSelect(dialect)}>
-              {dialect}
-            </li>
-          ))}
-        </ul>
-      </aside>
+    <div className="container my-5">
+      <div className="layout">
+        {/* Left side: Navigation and card */}
+        <div className="left-side">
+          <ul className="nav nav-tabs flex-row">
+            {['Daraga', 'Cam Norte'].map(dialect => (
+              <li className="nav-item" key={dialect}>
+                <a
+                  className={`nav-link ${selectedDialect === dialect ? 'active' : ''}`}
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleDialectSelect(dialect);
+                  }}
+                >
+                  {dialect}
+                </a>
+              </li>
+            ))}
+          </ul>
 
-      <main className="content">
-        <header>
-          <h1>Manage Dialect Files</h1>
-          {alert.visible && (
-            <div className={`alert alert-${alert.type} alert-dismissible fade show`} role="alert">
-              {alert.message}
-              <button type="button" className="close" onClick={() => setAlert({ ...alert, visible: false })}>
-                &times;
-              </button>
+          {/* Details card */}
+          <div className="card mt-4">
+            <img src="https://via.placeholder.com/150" className="card-img-top" alt="Dialect" />
+            <div className="card-body">
+              <p className="card-text">
+                {`Details about the ${selectedDialect} dialect.`}
+              </p>
             </div>
-          )}
-        </header>
+          </div>
+        </div>
 
-        <div className="upload-section card shadow-sm p-4">
+        {/* Right side: Breadcrumbs and drag/drop */}
+        <div className="right-side">
+          <nav aria-label="breadcrumb">
+            <ol className="breadcrumb">
+              <li className="breadcrumb-item active" aria-current="page">{`/update/${selectedDialect}`}</li>
+            </ol>
+          </nav>
+
+          {/* Drag and drop area */}
           <div
             className="drag-area"
             onDragOver={handleDragOver}
             onDrop={handleDrop}
           >
-            <p>Drag and drop an XLSX file here, or click to select</p>
+            <p>Drag and drop an XLSX file here, or <strong>click to select</strong></p>
             <input type="file" accept=".xlsx" onChange={handleFileChange} />
           </div>
 
+          {/* File and Dialect Information */}
           {file && (
-            <div className="file-info">
+            <div className="file-info mt-3">
               <p><strong>Selected File:</strong> {file.name}</p>
-              <p><strong>Selected Dialect:</strong> {selectedDialect || 'None'}</p>
+              <p><strong>Selected Dialect:</strong> {selectedDialect}</p>
             </div>
           )}
 
+          {/* Upload Progress */}
           {loading && (
             <div className="progress mt-3" role="progressbar" aria-valuenow={Math.round(progress)} aria-valuemin="0" aria-valuemax="100">
               <div className="progress-bar" style={{ width: `${progress}%` }}>
@@ -119,20 +132,22 @@ const Dialect = () => {
               </div>
             </div>
           )}
-<button 
-  className={`btn ${loading || !file || !selectedDialect ? 'btn-secondary' : 'btn-primary'} mt-3`} 
-  onClick={handleUpload} 
-  disabled={loading || !file || !selectedDialect}
->
-  {loading ? (
-    <span>
-      <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-      Uploading...
-    </span>
-  ) : 'Upload File'}
-</button>
+
+          {/* Upload Button */}
+          <button 
+            className={`btn ${loading || !file || !selectedDialect ? 'btn-secondary' : 'btn-primary'} mt-3`} 
+            onClick={handleUpload} 
+            disabled={loading || !file || !selectedDialect}
+          >
+            {loading ? (
+              <span>
+                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Uploading...
+              </span>
+            ) : 'Upload File'}
+          </button>
         </div>
-      </main>
+      </div>
     </div>
   );
 };

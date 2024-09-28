@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { auth } from "../../firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../components/LoadingCoverScreen/Loading";
 import "./Login.css";
@@ -11,48 +11,77 @@ const Login = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const googleProvider = new GoogleAuthProvider();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setLoading(true); 
+    setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate("/dashboard"); 
+      navigate("/dashboard");
     } catch (error) {
       setError(error.message);
     } finally {
-      setLoading(false); 
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+    try {
+      await signInWithPopup(auth, googleProvider);
+      navigate("/dashboard");
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <>
       {loading ? (
-        <Loading /> 
+        <Loading />
       ) : (
-        <div className="login-container">
-          <div className="login-form">
-            <h2>Login</h2>
+        <div className="login-page">
+          <div className="login-container">
+            <div className="login-header">
+              <h1>Liggwistiko</h1> 
+              <p>Welcome back! Please login to your account.</p>
+            </div>
             {error && <p className="error-message">{error}</p>}
             <form onSubmit={handleLogin}>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email"
-                required
-                className="login-input"
-              />
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
-                required
-                className="login-input"
-              />
-              <button type="submit" className="login-button">Login</button>
+              <div className="input-group">
+                <i className="fas fa-envelope"></i>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Email"
+                  required
+                />
+              </div>
+              <div className="input-group">
+                <i className="fas fa-lock"></i>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Password"
+                  required
+                />
+              </div>
+              <div className="options">
+                <button type="submit" className="primary-button-login">Login</button>
+                <p className="forgot-password">Forgot Password?</p>
+              </div>
             </form>
+
+            <div className="divider">OR</div>
+
+            <button onClick={handleGoogleLogin} className="google-login-button">
+              <i className="fab fa-google"></i> Login with Google
+            </button>
           </div>
         </div>
       )}

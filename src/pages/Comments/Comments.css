@@ -9,13 +9,14 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  width: 95wv;
 }
 
 .top-container-comment {
   background-color: #ffffff;
   padding: 1rem 0 0 1rem;
   border-bottom: 1px solid #ccc;
-  width: 95vw;
+  width: 100%;
   margin-top: 8vh;
 }
 
@@ -23,7 +24,6 @@ body {
   text-align: left;
   margin-left: 1rem;
 }
-
 
 .content-container {
   display: flex;
@@ -41,9 +41,6 @@ body {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-
-
-
 .right-section {
   width: 30%;
   padding: 2rem;
@@ -54,6 +51,7 @@ body {
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
 .item-right {
   z-index: 0;
 }
@@ -65,8 +63,6 @@ body {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s;
 }
-
-
 
 .card h3 {
   margin: 0 0 0.5rem;
@@ -126,9 +122,9 @@ body {
 
 .profile-img {
   display: flex;
-  justify-content: center; 
-  align-items: center; 
-  height: 42px; 
+  justify-content: center;
+  align-items: center;
+  height: 42px;
   width: 42px;
   border: solid gray;
   border-radius: .7rem;
@@ -139,7 +135,6 @@ body {
   font-size: 2rem;
   /* margin-right: 1rem; */
 }
-
 
 .user-details {
   margin-top: 1rem;
@@ -193,13 +188,23 @@ body {
 }
 
 .comment-card {
-  margin-bottom: 0.5rem; 
-  font-size: 1rem; 
-  transition: none; 
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  transition: none;
+}
+
+.comment-user {
+  display: flex;
+  align-items: center;
+}
+
+.comment-user .user-icon {
+  margin-right: 0.5rem; /* Add some space between the icon and the email */
 }
 
 .comment-card .card-header {
-  padding: 0.5rem; 
+  padding: 0.5rem;
+  justify-content: center;
 }
 
 .comment-card .card-body {
@@ -207,12 +212,12 @@ body {
 }
 
 .comment-card p {
-  margin-bottom: 0.25rem; 
+  margin-bottom: 0.25rem;
 }
 
 .comment-card footer {
   font-size: 0.85rem;
-  color: #666; 
+  color: #666;
 }
 
 .list-group {
@@ -292,11 +297,11 @@ body {
 }
 
 .approved {
-  color: green; 
+  color: green;
 }
 
 .not-approved {
-  color: red; 
+  color: red;
 }
 
 .verified {
@@ -304,12 +309,21 @@ body {
 }
 
 .not-verified {
-  color: gray; 
+  color: gray;
 }
 
 .toast-container {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  z-index: 1050; 
+  z-index: 1050;
+}
+
+
+.rating-star.filled {
+  color: gold;
+}
+
+.rating-star {
+  color: lightgray;
 }

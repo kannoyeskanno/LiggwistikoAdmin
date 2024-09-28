@@ -20,7 +20,7 @@ function Sidebar() {
     const sidebar = document.querySelector(".sidebar");
     const content = document.querySelector(".content");
     const toolbar = document.querySelector(".toolbar");
-    const iconSearch = document.querySelector(".iconSearch");
+    // const iconSearch = document.querySelector(".iconSearch");
 
     const handleToggleClick = () => {
       sidebar.classList.toggle("close");
@@ -28,29 +28,29 @@ function Sidebar() {
         content.style.marginLeft = "5%";
         content.style.width = "95%";
         toolbar.style.width = "95%";
-        iconSearch.style.opacity = "1";
+        // iconSearch.style.opacity = "1";
       } else {
         content.style.marginLeft = "12%";
         toolbar.style.width = "88%";
         content.style.width = "88%";
 
-        iconSearch.style.opacity = "0";
+        // iconSearch.style.opacity = "0";
       }
     };
 
-    const handleSearchClick = () => {
-      sidebar.classList.remove("close");
-      content.style.marginLeft = "12%";
-      toolbar.style.width = "88%";
-      iconSearch.style.opacity = "0";
-    };
+    // const handleSearchClick = () => {
+    //   sidebar.classList.remove("close");
+    //   content.style.marginLeft = "12%";
+    //   toolbar.style.width = "88%";
+    //   iconSearch.style.opacity = "0";
+    // };
 
     toggle.addEventListener("click", handleToggleClick);
-    searchBTN.addEventListener("click", handleSearchClick);
+    // searchBTN.addEventListener("click", handleSearchClick);
 
     return () => {
       toggle.removeEventListener("click", handleToggleClick);
-      searchBTN.removeEventListener("click", handleSearchClick);
+      // searchBTN.removeEventListener("click", handleSearchClick);
     };
   }, []);
   return (
@@ -69,10 +69,10 @@ function Sidebar() {
       </header>
       <div className="menu-bar">
         <div className="menu">
-          <li className="search-box">
+          {/* <li className="search-box">
             <i className="material-symbols-outlined iconSearch">search</i>
             <input type="text" placeholder="Search..." />
-          </li>
+          </li> */}
           <ul className="menu-links">
             <li
               className={`nav-link ${

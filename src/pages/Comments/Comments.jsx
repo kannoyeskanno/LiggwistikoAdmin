@@ -111,6 +111,24 @@ const Comments = () => {
     setShowPopover(false); 
   };
 
+
+  const renderStars = (rating) => {
+    const totalStars = 5;
+    const filledStars = rating;
+    const unfilledStars = totalStars - filledStars;
+
+    return (
+      <>
+        {[...Array(filledStars)].map((_, index) => (
+          <i key={index} className="material-symbols-outlined rating-star filled">star</i>
+        ))}
+        {[...Array(unfilledStars)].map((_, index) => (
+          <i key={index} className="material-symbols-outlined rating-star">star</i>
+        ))}
+      </>
+    );
+  };
+
  
   const popover = (
     <Popover id="popover-basic">
@@ -288,16 +306,23 @@ const Comments = () => {
       comments.map((comment) => (
         <Card className="comment-card mb-3" key={comment.comment_id}>
           <Card.Header>
-          <i className="material-symbols-outlined user-icon">person</i>
-            {comment.user_email}</Card.Header>
+            <div className="comment-user">
+            <i className="material-symbols-outlined user-icon">person</i>
+              <div className="email">
+              {comment.user_email}
+              </div>
+            </div>
+          </Card.Header>
           <Card.Body>
             <blockquote className="blockquote mb-0">
               <p>
               {comment.comment}
               </p>
               <p>
-                {comment.rating}
-              </p>
+              <div className="rating">
+              {renderStars(comment.rating)}
+            </div>              
+            </p>
             
               <footer className="blockquote-footer">
                 {new Date(comment.timestamp).toLocaleString()}

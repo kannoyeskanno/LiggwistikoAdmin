@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import './Toolbar.css'; 
 import CircularButton from '../CircularButton/CircularButton';
 import ToolbarProfile from '../ToolbarProfile/ToolbarProfile';
-import { Button, Offcanvas } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css'; 
 import { auth } from '../../firebase'; 
+import OffCanvasProfile from '../OffCanvasProfile/OffCanvasProfile';
 
 function Toolbar() {
   const [show, setShow] = useState(false);
@@ -24,9 +23,11 @@ function Toolbar() {
   return (
     <header className="toolbar">
       <div className="toolbar__left">
+        {/* Add any content or logo for the left side */}
       </div>
 
       <div className="toolbar__center">
+        {/* Centered content */}
       </div>
 
       <div className="toolbar__right">
@@ -36,29 +37,13 @@ function Toolbar() {
         <div className="toolbar_profile">
           <ToolbarProfile />
         </div>
-          <i className="material-symbols-outlined icon_menu" onClick={handleShow}>menu_open</i>
-
+        <i className="material-symbols-outlined icon_menu" onClick={handleShow}>
+          menu_open
+        </i>
       </div>
 
-      <Offcanvas show={show} onHide={handleClose} placement="end">
-        <Offcanvas.Header closeButton>
-          <Offcanvas.Title>Off-Canvas Title</Offcanvas.Title>
-        </Offcanvas.Header>
-        <Offcanvas.Body>
-          {user ? (
-            <div>
-              <h5>Welcome, {user.displayName || 'User'}!</h5>
-              <p>Email: {user.email}</p>
-              <Button variant="secondary" onClick={() => auth.signOut()}>
-                Sign Out
-              </Button>
-            </div>
-          ) : (
-            <p>Please log in.</p>
-          )}
-          <Button variant="secondary" onClick={handleClose}>Close</Button>
-        </Offcanvas.Body>
-      </Offcanvas>
+      {/* Updated OffcanvasProfile component with the new design */}
+      <OffCanvasProfile show={show} handleClose={handleClose} />
     </header>
   );
 }

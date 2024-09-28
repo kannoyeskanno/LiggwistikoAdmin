@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import './Settings.css';
-import { auth } from '../../firebase'; 
-import { getDatabase, ref, get, set } from 'firebase/database'; 
+import { auth } from '../../firebase'; // Import auth to get the user info
+import { getDatabase, ref, get, set } from 'firebase/database'; // Import Realtime Database
 
 export default function Settings() {
   const [frequency, setFrequency] = useState('immediate');
   const [notifyApproval, setNotifyApproval] = useState(false);
   const [notifyRejection, setNotifyRejection] = useState(false);
   const [notifyStatus, setNotifyStatus] = useState(false);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true); // Loading state for fetching data
 
   useEffect(() => {
+    // Fetch existing settings from Firebase if available
     const fetchSettings = async () => {
       const user = auth.currentUser;
 
@@ -22,6 +23,7 @@ export default function Settings() {
           const snapshot = await get(userSettingsRef);
           if (snapshot.exists()) {
             const data = snapshot.val();
+            // Prepopulate settings from database
             setFrequency(data.notificationSettings.frequency || 'immediate');
             setNotifyApproval(data.notificationSettings.notifyApproval || false);
             setNotifyRejection(data.notificationSettings.notifyRejection || false);
@@ -30,7 +32,7 @@ export default function Settings() {
         } catch (error) {
           console.error("Error fetching settings: ", error);
         } finally {
-          setLoading(false); 
+          setLoading(false); // Stop loading when the data is fetched
         }
       } else {
         setLoading(false);
@@ -43,14 +45,16 @@ export default function Settings() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Get the current user
     const user = auth.currentUser;
 
     if (user) {
-      const db = getDatabase(); 
-      const userSettingsRef = ref(db, 'users/' + user.uid + '/settings'); 
+      const db = getDatabase(); // Get the Realtime Database instance
+      const userSettingsRef = ref(db, 'users/' + user.uid + '/settings'); // Set path for storing user settings
 
+      // Save settings to Realtime Database
       set(userSettingsRef, {
-        email: user.email, 
+        email: user.email, // Save user email
         notificationSettings: {
           frequency,
           notifyApproval,
@@ -70,7 +74,22 @@ export default function Settings() {
   };
 
   if (loading) {
-    return <div>Loading...</div>; 
+    return (
+      <div className="spinner center">
+        <div className="spinner-blade"></div>
+        <div className="spinner-blade"></div>
+        <div className="spinner-blade"></div>
+        <div className="spinner-blade"></div>
+        <div className="spinner-blade"></div>
+        <div className="spinner-blade"></div>
+        <div className="spinner-blade"></div>
+        <div className="spinner-blade"></div>
+        <div className="spinner-blade"></div>
+        <div className="spinner-blade"></div>
+        <div className="spinner-blade"></div>
+        <div className="spinner-blade"></div>
+      </div>
+    ); // Show spinner while loading
   }
 
   return (
