@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Sidebar from "./components/Sidebar/Sidebar";
 import SignUp from "./Signup";
@@ -9,15 +9,13 @@ import Toolbar from "./components/Toolbar/Toolbar";
 import ContributionManagement from "./pages/ContributionManagement/ContributionManagement";
 import Comments from "./pages/Comments/Comments";
 import Account from "./pages/AccountManagement/Account";
-
 import Dialect from "./pages/Dialect/Dialect";
 import Analytics from "./pages/Analytics/Analytics";
-
-
 import './style/Root.css';
 
-
 const App = () => {
+  const isAuthenticated = false; // Change this according to your authentication logic
+
   return (
     <Router>
       <div className="app">
@@ -28,7 +26,7 @@ const App = () => {
           <Route
             path="/*"
             element={
-              <>
+              isAuthenticated ? ( // Check if the user is authenticated
                 <div className="app-layout">
                   <Sidebar />
                   <div className="content">
@@ -40,13 +38,13 @@ const App = () => {
                       <Route path="/dialectCategories" element={<Dialect />} />
                       <Route path="/comments" element={<Comments />} />
                       <Route path="/analytics" element={<Analytics />} />
-
                       <Route path="/settings" element={<Settings />} />
-
                     </Routes>
                   </div>
                 </div>
-              </>
+              ) : (
+                <Navigate to="/login" /> // Redirect to login if not authenticated
+              )
             }
           />
         </Routes>
