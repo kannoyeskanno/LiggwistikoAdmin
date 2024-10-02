@@ -1,18 +1,18 @@
 {
   "files": {
     "main.css": "/LiggwistikoAdmin/static/css/main.d81a0bf3.css",
-    "main.js": "/LiggwistikoAdmin/static/js/main.974317b6.js",
+    "main.js": "/LiggwistikoAdmin/static/js/main.61446e63.js",
     "static/js/453.430b65b4.chunk.js": "/LiggwistikoAdmin/static/js/453.430b65b4.chunk.js",
     "static/media/swk_logo.png": "/LiggwistikoAdmin/static/media/swk_logo.014795ae8ecd32539b7a.png",
     "static/media/arfis-logo.png": "/LiggwistikoAdmin/static/media/arfis-logo.c9d32e71569505d0ee4b.png",
     "static/media/empty-inbox.png": "/LiggwistikoAdmin/static/media/empty-inbox.bcaac95e8aa659d9df59.png",
     "index.html": "/LiggwistikoAdmin/index.html",
     "main.d81a0bf3.css.map": "/LiggwistikoAdmin/static/css/main.d81a0bf3.css.map",
-    "main.974317b6.js.map": "/LiggwistikoAdmin/static/js/main.974317b6.js.map",
+    "main.61446e63.js.map": "/LiggwistikoAdmin/static/js/main.61446e63.js.map",
     "453.430b65b4.chunk.js.map": "/LiggwistikoAdmin/static/js/453.430b65b4.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.d81a0bf3.css",
-    "static/js/main.974317b6.js"
+    "static/js/main.61446e63.js"
   ]
 }
