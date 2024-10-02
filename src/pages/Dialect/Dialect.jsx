@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { getDatabase, ref as dbRef, set } from "firebase/database";
 import './Dialect.css';
 import { app } from '../../firebase'; 
 import 'bootstrap/dist/css/bootstrap.min.css';
+
+import "../../images/arfis-logo.png";
 
 const Dialect = () => {
   const [file, setFile] = useState(null);
@@ -11,6 +13,7 @@ const Dialect = () => {
   const [alert, setAlert] = useState({ visible: false, message: '', type: '' });
   const [selectedDialect, setSelectedDialect] = useState('Daraga');
   const [progress, setProgress] = useState(0);
+  const [fadeIn, setFadeIn] = useState(true);
   const storage = getStorage(app);
   const database = getDatabase(app);
 
@@ -33,6 +36,9 @@ const Dialect = () => {
 
     const storageRef = ref(storage, `xlsx/${selectedDialect.toUpperCase()}/${file.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
+
+    const imageURL = getDialectImage(selectedDialect);
+    console.log(imageURL);
 
     setLoading(true);
 
@@ -58,17 +64,60 @@ const Dialect = () => {
             timestamp,
             fileName: file.name,
           });
+
+          setTimeout(() => {
+            setAlert({ visible: false, message: '', type: '' });
+          }, 5000);
         });
       }
     );
   };
 
-  const handleDialectSelect = (dialect) => setSelectedDialect(dialect);
+  const handleDialectSelect = (dialect) => {
+    setFadeIn(false);
 
+    setTimeout(() => {
+      setSelectedDialect(dialect);
+      setFadeIn(true);
+    }, 500); 
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setFadeIn(true);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const getDialectDetails = () => {
+    if (selectedDialect === 'Daraga') {
+      return `East Miraya Bikol, also known as Bikol Miraya, is a dialect of the Bikol language spoken primarily in the eastern part of Albay province, specifically in the towns of Daraga, Legazpi, and neighboring areas.`;
+    } else {
+      return `The Camarines Norte dialect is spoken in the northern part of the Bicol region. This dialect has notable differences in pronunciation and vocabulary compared to other Bicol languages.`;
+    }
+  };
+
+  const getDialectImage = (selectedDialect) => {
+    if (selectedDialect === 'Daraga') {
+      return "arfis-logo.png";  
+    } else if (selectedDialect === 'Cam Norte') {
+      return "https://example.com/cam-norte-image.jpg"; 
+    }
+    return "https://via.placeholder.com/150";  
+  };
+  
   return (
-    <div className="container my-5">
+    <div className="container">
+      <div className="top-side">
+        {alert.visible && (
+          <div className={`alert alert-${alert.type} show`} role="alert">
+            {alert.message}
+          </div>
+        )}
+
+       
+      </div>
       <div className="layout">
-        {/* Left side: Navigation and card */}
         <div className="left-side">
           <ul className="nav nav-tabs flex-row">
             {['Daraga', 'Cam Norte'].map(dialect => (
@@ -87,26 +136,23 @@ const Dialect = () => {
             ))}
           </ul>
 
-          {/* Details card */}
           <div className="card mt-4">
-            <img src="https://via.placeholder.com/150" className="card-img-top" alt="Dialect" />
+            <img src={getDialectImage(selectedDialect)} className="card-img-top" alt={selectedDialect} />
             <div className="card-body">
-              <p className="card-text">
-                {`Details about the ${selectedDialect} dialect.`}
+              <p className={`card-text fade ${fadeIn ? 'active' : ''}`}>
+                {getDialectDetails()}
               </p>
             </div>
           </div>
         </div>
 
-        {/* Right side: Breadcrumbs and drag/drop */}
         <div className="right-side">
           <nav aria-label="breadcrumb">
             <ol className="breadcrumb">
-              <li className="breadcrumb-item active" aria-current="page">{`/update/${selectedDialect}`}</li>
+              <li className="breadcrumb-item active" aria-current="page">{`/ update / ${selectedDialect}`}</li>
             </ol>
           </nav>
 
-          {/* Drag and drop area */}
           <div
             className="drag-area"
             onDragOver={handleDragOver}
@@ -116,7 +162,6 @@ const Dialect = () => {
             <input type="file" accept=".xlsx" onChange={handleFileChange} />
           </div>
 
-          {/* File and Dialect Information */}
           {file && (
             <div className="file-info mt-3">
               <p><strong>Selected File:</strong> {file.name}</p>
@@ -124,7 +169,6 @@ const Dialect = () => {
             </div>
           )}
 
-          {/* Upload Progress */}
           {loading && (
             <div className="progress mt-3" role="progressbar" aria-valuenow={Math.round(progress)} aria-valuemin="0" aria-valuemax="100">
               <div className="progress-bar" style={{ width: `${progress}%` }}>
@@ -133,7 +177,6 @@ const Dialect = () => {
             </div>
           )}
 
-          {/* Upload Button */}
           <button 
             className={`btn ${loading || !file || !selectedDialect ? 'btn-secondary' : 'btn-primary'} mt-3`} 
             onClick={handleUpload} 

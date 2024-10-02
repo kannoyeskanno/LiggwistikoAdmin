@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, doc as firestoreDoc } from "firebase/firestore"; 
 import { getStorage } from "firebase/storage";
 import { getFunctions } from "firebase/functions";
 import { getDatabase } from "firebase/database"; 
@@ -15,12 +15,12 @@ const firebaseConfig = {
   measurementId: "G-QL860B6ZV7"
 };
 
-const app = initializeApp(firebaseConfig); 
+const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 const functions = getFunctions(app);
-const realtimeDb = getDatabase(app); 
+const realtimeDb = getDatabase(app);
 
-export { auth, db, storage, functions, realtimeDb, app }; 
+export { auth, db, storage, functions, realtimeDb, app, firestoreDoc }; // Export renamed 'firestoreDoc'

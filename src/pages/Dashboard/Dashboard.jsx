@@ -262,7 +262,7 @@ const Dashboard = () => {
                     <td>{row.input_main || ''}</td>
                     <td>{row.output_main || ''}</td>
                     <td>{row.contributed_text || ''}</td>
-                    <td>{row.contributed_description || ''}</td>
+                    <td>{row.description || ''}</td>
                     <td>
                       {row.approved === true ? (
                         "Yes"
