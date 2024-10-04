@@ -85,7 +85,7 @@ function Sidebar() {
               </Link>
             </li>
 
-            <li
+            {/* <li
               className={`nav-link ${
                 location.pathname === "/userManagement" ? "active" : ""
               }`}
@@ -96,9 +96,9 @@ function Sidebar() {
                 </i>
                 <span className="text nav-text">Accounts</span>
               </Link>
-            </li>
+            </li> */}
 
-            <li
+            {/* <li
               className={`nav-link ${
                 location.pathname === "/contributionManagement" ? "active" : ""
               }`}
@@ -107,7 +107,7 @@ function Sidebar() {
                 <i className="material-symbols-outlined icon">folder_shared</i>
                 <span className="text nav-text">Contributions</span>
               </Link>
-            </li>
+            </li> */}
 
             <li
               className={`nav-link ${

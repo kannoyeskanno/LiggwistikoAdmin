@@ -46,7 +46,7 @@ const Login = () => {
         <div className="login-page">
           <div className="login-container">
             <div className="login-header">
-              <h1>Liggwistiko</h1> 
+              <h1>Linggwistiko</h1> 
               <p>Welcome back! Please login to your account.</p>
             </div>
             {error && <p className="error-message">{error}</p>}

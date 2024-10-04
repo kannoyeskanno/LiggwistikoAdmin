@@ -31,9 +31,9 @@ function Toolbar() {
       </div>
 
       <div className="toolbar__right">
-        <div className="toolbar__actions">
+        {/* <div className="toolbar__actions">
           <CircularButton />
-        </div>
+        </div> */}
         <div className="toolbar_profile">
           <ToolbarProfile />
         </div>
