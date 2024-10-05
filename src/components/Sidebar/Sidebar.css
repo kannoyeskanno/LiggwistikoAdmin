@@ -12,6 +12,7 @@
 
 .sidebar.close {
   width: 88px;
+  opacity: 1;
 }
 
 .sidebar.close .text {

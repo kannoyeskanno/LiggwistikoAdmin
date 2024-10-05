@@ -1,7 +1,7 @@
 {
   "hosting": {
     "public": "build",
-    "site": "testfixhostlinggwistiko2",
+    "site": "testfixhostlinggwistiko2asdas",
     "ignore": [
       "firebase.json",
       "**/.*",

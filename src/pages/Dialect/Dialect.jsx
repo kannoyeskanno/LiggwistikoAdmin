@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { getDatabase, ref as dbRef, set } from "firebase/database";
-import './Dialect.css';
+import './Dialect.scss';
 import { app } from '../../firebase'; 
 import 'bootstrap/dist/css/bootstrap.min.css';
 

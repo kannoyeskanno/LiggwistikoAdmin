@@ -23,4 +23,4 @@ const storage = getStorage(app);
 const functions = getFunctions(app);
 const realtimeDb = getDatabase(app);
 
-export { auth, db, storage, functions, realtimeDb, app, firestoreDoc }; // Export renamed 'firestoreDoc'
+export { auth, db, storage, functions, realtimeDb, app, firestoreDoc }; 

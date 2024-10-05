@@ -1,291 +1,128 @@
-import React, { useState } from 'react';
-import { collection, getDocs, doc, updateDoc } from "firebase/firestore";
-import { db } from '../../firebase';  
-import { Shimmer } from 'react-shimmer'; 
-import * as XLSX from 'xlsx'; 
-import './Dashboard.css'; 
-import UserCount from '../../components/UserCount/UserCount';
-
-const languagePairs = [
-
-  
-  "Cam Norte-Filipino",
-  "Cam Norte-English",
-  "Cam Norte-Daraga", 
-
-
-  "Cam Norte-Filipino",
-  "Cam Norte-English",
-  "Cam Norte-Daraga",
-
-  "Daraga-English",
-  "Daraga-Filipino",
-  "Daraga-Cam Norte",
-
-
-  "English-Filipino",
-  "English-Daraga",
-  "English-Cam Norte",
-
-  "Filipino-Daraga",
-  "Filipino-English",
-  "Filipino-English",
-  "Filipino-Cam Norte"
-
-];
-
-const FIXED_ROWS = 10; 
+import React, { useState, useEffect } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Button, Card, Row, Col, Container } from 'react-bootstrap';
+import Loading from './LoadingCard/LoadingCard'; // Import the Loading component
+import SWL from "../../images/arfis-logo.png";
+import { auth } from '../../firebase'; 
+import { useNavigate } from 'react-router-dom'; // For redirection
+import { collection, getDocs, query, where } from 'firebase/firestore'; // Import Firestore methods
+import { db } from '../../firebase'; // Ensure you import your Firebase Firestore instance
 
 const Dashboard = () => {
-  const [contributions, setContributions] = useState([]);
-  const [selectedLanguagePair, setSelectedLanguagePair] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [filter, setFilter] = useState({ approved: 'all', verified: 'all' });
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const [unapprovedCounts, setUnapprovedCounts] = useState({}); // State for storing unapproved counts
+  const navigate = useNavigate(); 
 
-  const fetchContributions = async (languagePair) => {
-    setLoading(true);
-    setContributions([]); 
-    try {
-      const contributionsRef = collection(db, "translations", languagePair, "contributions");
-      const contributionsSnapshot = await getDocs(contributionsRef);  
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 3000);
+    return () => clearTimeout(timer);
+  }, []);
 
-      const contributionsData = contributionsSnapshot.docs.map(doc => ({
-        id: doc.id, 
-        ...doc.data() 
-      }));
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(
+      (user) => {
+        setUser(user);
+      },
+      (error) => {
+        console.error("Error fetching auth state: ", error);
+      }
+    );
+    return () => unsubscribe();
+  }, []);
+
+  const profiles = [
+    {
+      email: 'jomarasisgriffin@gmail.com',
+      name: 'Asis Jomar R.',
+      location: 'Daraga (East Miraya)',
+      role: 'Validator',
+      image: SWL,
+      language: 'Daraga',
+      canAccessLibrary: true,
+      translationPaths: ['Filipino-Daraga', 'Daraga-Filipino'], // Array for contributions
+    },
+    {
+      email: 'kannokanno914@gmail.com',
+      name: 'Kanno Kanno',
+      location: 'Camarines Norte (Coastal Bikol)',
+      role: 'Validator',
+      image: SWL,
+      language: 'Cam Norte',
+      canAccessLibrary: false,
+      translationPaths: ['CamNorte-Filipino', 'Filipino-CamNorte'], // Array for contributions
+    },
+  ];
+
+  // Updated handleDatasetAccess to accept language
+  const handleDatasetAccess = (email, paths, count, language) => { 
+    navigate(`/library/${encodeURIComponent(email)}?paths=${encodeURIComponent(JSON.stringify(paths))}&unapprovedCounts=${encodeURIComponent(JSON.stringify({ [email]: count }))}&language=${encodeURIComponent(language)}`); 
+  };
+
+  useEffect(() => {
+    const fetchUnapprovedCounts = async () => {
+      const counts = {};
       
-      setContributions(contributionsData); 
-    } catch (error) {
-      console.error("Error fetching contributions:", error);
-    } finally {
-      setLoading(false); 
-    }
-  };
+      await Promise.all(profiles.map(async (profile) => {
+        let totalUnapproved = 0; // Initialize total count for the profile
 
-  const handleLanguageChange = (e) => {
-    const selectedPair = e.target.value;
-    setSelectedLanguagePair(selectedPair);
-    if (selectedPair) {
-      fetchContributions(selectedPair);
-    }
-  };
+        // Loop through each translation path
+        await Promise.all(profile.translationPaths.map(async (path) => {
+          const q = query(
+            collection(db, `translations/${path}/contributions`), // Query the contributions for each path
+            where("approved", "==", false) // Filter for unapproved contributions
+          );
 
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilter(prevFilter => ({ ...prevFilter, [name]: value }));
-  };
+          const querySnapshot = await getDocs(q);
+          totalUnapproved += querySnapshot.size; // Add to total unapproved count
+        }));
 
-  const handleApprove = async (contributionId) => {
-    try {
-      const contributionDocRef = doc(db, "translations", selectedLanguagePair, "contributions", contributionId);
-      await updateDoc(contributionDocRef, { approved: true });
-      setContributions(prevContributions => 
-        prevContributions.map(contribution =>
-          contribution.id === contributionId ? { ...contribution, approved: true } : contribution
-        )
-      );
-    } catch (error) {
-      console.error("Error approving contribution:", error);
-    }
-  };
+        counts[profile.email] = totalUnapproved; // Store the total count for the profile
+      }));
 
-  const filteredContributions = contributions.filter(contribution => {
-    const approvedFilter = filter.approved === 'all' || (filter.approved === 'yes' && contribution.approved) || (filter.approved === 'no' && !contribution.approved);
-    const verifiedFilter = filter.verified === 'all' || (filter.verified === 'yes' && contribution.verified) || (filter.verified === 'no' && !contribution.verified);
-    return approvedFilter && verifiedFilter;
-  });
+      setUnapprovedCounts(counts); // Update state with counts
+    };
 
-  const displayRows = [...Array(FIXED_ROWS).fill({})];
-  filteredContributions.forEach((contribution, index) => {
-    if (index < FIXED_ROWS) {
-      displayRows[index] = contribution;
-    }
-  });
-
-  const exportToExcel = (data, filename) => {
-    const ws = XLSX.utils.json_to_sheet(data);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
-    XLSX.writeFile(wb, filename);
-  };
-
-  const handleExportTable = () => {
-    exportToExcel(filteredContributions, 'contributions.xlsx');
-  };
-
-  const handleExportML = () => {
-    const mlData = filteredContributions.map(({ input_main, contributed_text }) => ({
-      input_main,
-      contributed_text
-    }));
-    exportToExcel(mlData, 'ml_data.xlsx');
-  };
+    fetchUnapprovedCounts();
+  }, [profiles]); // Run this effect only once after the component mounts
 
   return (
-
-    
-    <div className="dashboard-container">
-      {/* <UserCount/> */}
-
-      <h1>Select a Language Pair</h1>
-
-      <select className="dropdown" onChange={handleLanguageChange} value={selectedLanguagePair}>
-        <option value="">-- Select Language Pair --</option>
-        {languagePairs.map((pair) => (
-          <option key={pair} value={pair}>
-            {pair}
-          </option>
-        ))}
-      </select>
-
-      <div className="filter-container">
-        <h2>Filter Contributions</h2>
-        <div className="filter-group">
-          <label>
-            <input
-              type="radio"
-              name="approved"
-              value="all"
-              checked={filter.approved === 'all'}
-              onChange={handleFilterChange}
-            />
-            All Approved and Not Approved
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="approved"
-              value="yes"
-              checked={filter.approved === 'yes'}
-              onChange={handleFilterChange}
-            />
-            Approved Only
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="approved"
-              value="no"
-              checked={filter.approved === 'no'}
-              onChange={handleFilterChange}
-            />
-            Not Approved Only
-          </label>
-        </div>
-        <div className="filter-group">
-          <label>
-            <input
-              type="radio"
-              name="verified"
-              value="all"
-              checked={filter.verified === 'all'}
-              onChange={handleFilterChange}
-            />
-            All Verified and Not Verified
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="verified"
-              value="yes"
-              checked={filter.verified === 'yes'}
-              onChange={handleFilterChange}
-            />
-            Verified Only
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="verified"
-              value="no"
-              checked={filter.verified === 'no'}
-              onChange={handleFilterChange}
-            />
-            Not Verified Only
-          </label>
-        </div>
-      </div>
-
-      <h2>Selected Language Pair: {selectedLanguagePair}</h2>
-
-      <div className="export-buttons">
-        <button onClick={handleExportTable}>Export Table to Excel</button>
-        <button onClick={handleExportML}>Export for ML (input_main & contributed_text)</button>
-      </div>
-
-      {loading ? (
-        <Shimmer>
-          <div className="table-container">
-            <table className="contribution-table">
-              <thead>
-                <tr>
-                  <th>Input Main</th>
-                  <th>Output Main</th>
-                  <th>Contributed Text</th>
-                  <th>Description</th>
-                  <th>Approved</th>
-                  <th>Verified</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[...Array(FIXED_ROWS)].map((_, index) => (
-                  <tr key={index}>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Shimmer>
-      ) : (
-        <div className="table-container">
-          {filteredContributions.length > 0 ? (
-            <table className="contribution-table">
-              <thead>
-                <tr>
-                  <th>Input Main</th>
-                  <th>Output Main</th>
-                  <th>Contributed Text</th>
-                  <th>Description</th>
-                  <th>Approved</th>
-                  <th>Verified</th>
-                </tr>
-              </thead>
-              <tbody>
-                {displayRows.map((row, index) => (
-                  <tr key={index}>
-                    <td>{row.input_main || ''}</td>
-                    <td>{row.output_main || ''}</td>
-                    <td>{row.contributed_text || ''}</td>
-                    <td>{row.description || ''}</td>
-                    <td>
-                      {row.approved === true ? (
-                        "Yes"
-                      ) : row.approved === false ? (
-                        <>
-                          No{" "}
-                          <button onClick={() => handleApprove(row.id)}>Approve</button>
-                        </>
-                      ) : (
-                        ""
-                      )}
-                    </td>
-                    <td>{row.verified === true ? "Yes" : row.verified === false ? "No" : ""}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : !loading && selectedLanguagePair ? (
-            <p>No contributions found for this language pair.</p>
-          ) : null}
-        </div>
-      )}
-    </div>
+    <Container className="dashboard-container text-center">
+      <Row className="justify-content-center mt-4">
+        {loading ? (
+          <Loading /> 
+        ) : (
+          profiles.map((profile, index) => (
+            <Col key={index} md={4} className="mb-4 d-flex justify-content-center">
+              <Card className="profile-card">
+                <Card.Body className="d-flex align-items-center">
+                  <div className="image-profile me-3">
+                    <img src={profile.image} alt="profile" className="profile-image" />
+                  </div>
+                  <div className="text-details text-start">
+                    <h3 className="name">{profile.name}</h3>
+                    <p className="role mb-1">{profile.role}</p>
+                    <p className="location">{profile.location}</p>
+                    <p className="unapproved-count">
+                      Unapproved Contributions: {unapprovedCounts[profile.email] || 0} {/* Display count */}
+                    </p>
+                  </div>
+                </Card.Body>
+                <Button 
+                  variant="primary" 
+                  className="w-100" 
+                  disabled={!user || user.email !== profile.email || !profile.canAccessLibrary} 
+                  // Pass the language as a parameter
+                  onClick={() => handleDatasetAccess(profile.email, profile.translationPaths, unapprovedCounts[profile.email] || 0, profile.language)} 
+                >
+                  {profile.canAccessLibrary ? 'Access Library' : 'Access Denied'}
+                </Button>
+              </Card>
+            </Col>
+          ))
+        )}
+      </Row>
+    </Container>
   );
 };
 
