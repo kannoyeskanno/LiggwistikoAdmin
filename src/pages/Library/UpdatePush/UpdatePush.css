@@ -1,0 +1,27 @@
+.update-container {
+    
+}
+
+
+.update-push {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    border-top: solid gray 1px;
+
+}
+
+.right-update-view {
+    flex: 4; 
+    display: grid;
+    place-items: center;
+}
+
+.left-update-view {
+    flex: 1; /* Make it take equal space */
+    margin-left: 1rem;
+}
+
+.update-push table {
+    border-radius: 16px;
+}

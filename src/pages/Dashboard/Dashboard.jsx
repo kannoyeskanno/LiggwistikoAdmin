@@ -49,12 +49,11 @@ const Dashboard = () => {
       role: 'Validator',
       image: SWL,
       language: 'Cam Norte',
-      canAccessLibrary: false,
+      canAccessLibrary: false, // Set to false
       translationPaths: ['CamNorte-Filipino', 'Filipino-CamNorte'], // Array for contributions
     },
   ];
 
-  // Updated handleDatasetAccess to accept language
   const handleDatasetAccess = (email, paths, count, language) => { 
     navigate(`/library/${encodeURIComponent(email)}?paths=${encodeURIComponent(JSON.stringify(paths))}&unapprovedCounts=${encodeURIComponent(JSON.stringify({ [email]: count }))}&language=${encodeURIComponent(language)}`); 
   };
@@ -66,7 +65,6 @@ const Dashboard = () => {
       await Promise.all(profiles.map(async (profile) => {
         let totalUnapproved = 0; // Initialize total count for the profile
 
-        // Loop through each translation path
         await Promise.all(profile.translationPaths.map(async (path) => {
           const q = query(
             collection(db, `translations/${path}/contributions`), // Query the contributions for each path
@@ -97,7 +95,7 @@ const Dashboard = () => {
               <Card className="profile-card">
                 <Card.Body className="d-flex align-items-center">
                   <div className="image-profile me-3">
-                    <img src={profile.image} alt="profile" className="profile-image" />
+                    {/* <img src={profile.image} alt="profile" className="profile-image" /> */}
                   </div>
                   <div className="text-details text-start">
                     <h3 className="name">{profile.name}</h3>
@@ -111,11 +109,16 @@ const Dashboard = () => {
                 <Button 
                   variant="primary" 
                   className="w-100" 
-                  disabled={!user || user.email !== profile.email || !profile.canAccessLibrary} 
-                  // Pass the language as a parameter
-                  onClick={() => handleDatasetAccess(profile.email, profile.translationPaths, unapprovedCounts[profile.email] || 0, profile.language)} 
+                  disabled={!(user && user.email === profile.email)} 
+                  onClick={() => {
+                    if (user && user.email === profile.email) {
+                      handleDatasetAccess(profile.email, profile.translationPaths, unapprovedCounts[profile.email] || 0, profile.language);
+                    } else {
+                      alert("Access Denied");
+                    }
+                  }} 
                 >
-                  {profile.canAccessLibrary ? 'Access Library' : 'Access Denied'}
+                  {user && user.email === profile.email ? 'Access Library' : 'Access Denied'}
                 </Button>
               </Card>
             </Col>

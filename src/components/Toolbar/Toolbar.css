@@ -1,8 +1,9 @@
 .toolbar {
   position: fixed;
-  width: 95%;
+  width: 88%;
+  margin-left: 0;
   height: 8vh; 
-  background-color: #EEF7FF; 
+  background-color: var(--primary-color-darker); 
   top: 0;
   display: flex;
   align-items: center;

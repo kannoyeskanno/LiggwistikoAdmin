@@ -5,8 +5,8 @@ const Loading = () => {
   return (
     <Row className="justify-content-center mt-4">
       {[1, 2].map((_, index) => (
-        <Col key={index} md={4} className="mb-4 d-flex justify-content-center">
-          <Card className="profile-card placeholder-card" style={{ width: '18rem' }}>
+            <Col key={index} md={4} className="mb-4 d-flex justify-content-center">
+              <Card className="profile-card shadow-sm rounded border-0">
             <Card.Body className="d-flex align-items-center">
               <div className="image-profile me-3">
                 <img src="https://via.placeholder.com/150" alt="placeholder" className="profile-image" />

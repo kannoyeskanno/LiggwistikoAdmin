@@ -30,12 +30,12 @@
 
 .profile-name {
   font-weight: bold;
-  color: #333; 
+  color: var(--sidebar-color); 
   font-size: 1rem;
 }
 
 .profile-position {
-  color: #666; 
+  color: var(--sidebar-color); 
   font-size: .8rem;
 }
 

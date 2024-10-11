@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { getDatabase, ref, get, update, remove } from 'firebase/database'; 
-import { Modal, Button, Spinner } from 'react-bootstrap'; 
-import './Lib.css'; 
+import { getDatabase, ref, get, update, remove } from 'firebase/database';
+import { Modal, Button, Spinner } from 'react-bootstrap';
+import './Lib.css';
 
 const Lib = ({ email, paths, language, unapprovedCount }) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [loadingSearch, setLoadingSearch] = useState(false); // New loading state for search
-  const [showModal, setShowModal] = useState(false); 
-  const [modalAction, setModalAction] = useState(''); 
-  const [currentItem, setCurrentItem] = useState(null); 
-  const [updatedTagalog, setUpdatedTagalog] = useState(''); 
-  const [updatedBikol, setUpdatedBikol] = useState(''); 
-  const [showSuccessModal, setShowSuccessModal] = useState(false); 
-  const [successMessage, setSuccessMessage] = useState(''); 
-  const [searchTerm, setSearchTerm] = useState(''); // State for search term
-  const [filteredData, setFilteredData] = useState([]); // State for filtered data
+  const [loadingSearch, setLoadingSearch] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [modalAction, setModalAction] = useState('');
+  const [currentItem, setCurrentItem] = useState(null);
+  const [updatedTagalog, setUpdatedTagalog] = useState('');
+  const [updatedBikol, setUpdatedBikol] = useState('');
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredData, setFilteredData] = useState([]);
 
   const db = getDatabase();
 
@@ -25,9 +25,9 @@ const Lib = ({ email, paths, language, unapprovedCount }) => {
         let dbRefPath;
 
         if (language === 'Daraga') {
-          dbRefPath = '/13HwVWGPaI6OvUNZNjDvmekhIvGTOGv-3RBDElfGrr4o/Daraga'; 
+          dbRefPath = '/13HwVWGPaI6OvUNZNjDvmekhIvGTOGv-3RBDElfGrr4o/Daraga';
         } else if (language === 'Cam Norte') {
-          dbRefPath = '/path/to/cam/norte'; 
+          dbRefPath = '/13HwVWGPaI6OvUNZNjDvmekhIvGTOGv-3RBDElfGrr4o/Cam Norte';
         }
 
         if (dbRefPath) {
@@ -49,27 +49,27 @@ const Lib = ({ email, paths, language, unapprovedCount }) => {
     fetchData();
   }, [db, language]);
 
-  // Update filtered data based on search term
   useEffect(() => {
     if (data) {
-      setLoadingSearch(true); // Set loading state for search
+      setLoadingSearch(true);
       const timeoutId = setTimeout(() => {
         const filtered = Object.keys(data).filter(key => {
           const item = data[key];
+          const tagalogText = typeof item.Tagalog === 'string' ? item.Tagalog.toLowerCase() : '';
+          const bikolText = typeof item.Bikol === 'string' ? item.Bikol.toLowerCase() : '';
           return (
-            item.Tagalog.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.Bikol.toLowerCase().includes(searchTerm.toLowerCase())
+            tagalogText.includes(searchTerm.toLowerCase()) ||
+            bikolText.includes(searchTerm.toLowerCase())
           );
         });
         setFilteredData(filtered);
-        setLoadingSearch(false); // Reset loading state for search
-      }, 300); // Delay for search (300ms)
+        setLoadingSearch(false);
+      }, 300); 
 
-      return () => clearTimeout(timeoutId); // Cleanup timeout
+      return () => clearTimeout(timeoutId);
     }
-  }, [searchTerm, data]); // Trigger when searchTerm or data changes
+  }, [searchTerm, data]);
 
-  // Modal open/close handlers
   const handleClose = () => {
     setShowModal(false);
     setCurrentItem(null);
@@ -79,28 +79,28 @@ const Lib = ({ email, paths, language, unapprovedCount }) => {
   };
 
   const handleShow = (action, item) => {
-    setModalAction(action); 
-    setCurrentItem(item); 
+    setModalAction(action);
+    setCurrentItem(item);
     if (action === 'edit') {
-      setUpdatedTagalog(item?.Tagalog); 
-      setUpdatedBikol(item?.Bikol); 
+      setUpdatedTagalog(item?.Tagalog);
+      setUpdatedBikol(item?.Bikol);
     }
-    setShowModal(true); 
+    setShowModal(true);
   };
 
   const handleDelete = async () => {
     const dbRefPath = `/13HwVWGPaI6OvUNZNjDvmekhIvGTOGv-3RBDElfGrr4o/Daraga/${currentItem.key}`;
-    
+
     try {
-      await remove(ref(db, dbRefPath)); 
+      await remove(ref(db, dbRefPath));
       setData((prevData) => {
         const updatedData = { ...prevData };
-        delete updatedData[currentItem.key]; 
+        delete updatedData[currentItem.key];
         return updatedData;
       });
-      setSuccessMessage('Delete successful!'); 
-      setShowSuccessModal(true); 
-      handleClose(); 
+      setSuccessMessage('Delete successful!');
+      setShowSuccessModal(true);
+      handleClose();
     } catch (error) {
       console.error('Error deleting data: ', error);
     }
@@ -116,14 +116,14 @@ const Lib = ({ email, paths, language, unapprovedCount }) => {
       };
 
       try {
-        await update(ref(db, dbRefPath), updates); 
+        await update(ref(db, dbRefPath), updates);
         setData((prevData) => ({
           ...prevData,
           [currentItem.key]: { ...prevData[currentItem.key], ...updates },
         }));
-        setSuccessMessage('Edit successful!'); 
-        setShowSuccessModal(true); 
-        handleClose(); 
+        setSuccessMessage('Edit successful!');
+        setShowSuccessModal(true);
+        handleClose();
       } catch (error) {
         console.error('Error updating data: ', error);
       }
@@ -133,10 +133,6 @@ const Lib = ({ email, paths, language, unapprovedCount }) => {
   if (loading) {
     return (
       <div>
-        <h1>This is Library</h1>
-        <h2>User Email: {decodeURIComponent(email)}</h2>
-        <h3>Language: {language}</h3>
-        <h4>Unapproved Contributions: {unapprovedCount}</h4>
         <Spinner animation="border" />
       </div>
     );
@@ -144,80 +140,131 @@ const Lib = ({ email, paths, language, unapprovedCount }) => {
 
   return (
     <div>
-      <h1>This is Library</h1>
-      <h2>User Email: {decodeURIComponent(email)}</h2>
-      <h3>Language: {language}</h3>
-      <h4>Unapproved Contributions: {unapprovedCount}</h4>
-      
-      <input
-        type="text"
-        placeholder="Search Tagalog or Bikol..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)} // Update search term on input change
-        style={{ 
-          marginBottom: '20px', 
-          padding: '10px', 
-          width: '100%', 
-          borderRadius: '4px', 
-          border: '1px solid #ccc'
-        }}
-      />
+      <div style={{ position: 'relative', marginBottom: '20px' }}>
+        <input
+          type="text"
+          placeholder={`Search Filipino or ${
+            language === 'Daraga' ? 'Daraga (East Miraya)' : language === 'Cam Norte' ? 'Cam Norte (Coastal)' : language
+          }...`}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{
+            padding: '10px 40px 10px 40px', 
+            width: '100%',
+            borderRadius: '4px',
+            border: '1px solid #ccc',
+          }}
+        />
+        <span
+          className="search-icon" 
+          style={{
+            position: 'absolute',
+            left: '10px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            color: '#888',
+            pointerEvents: 'none',
+          }}
+        >
+          <i className="material-symbols-outlined search-icon">search</i>
+        </span>
+      </div>
 
       {loadingSearch && <Spinner animation="border" style={{ marginBottom: '20px' }} />}
 
-      <div>
-        <h3>Data for {language}</h3>
-        {filteredData.length > 0 ? (
-          filteredData.map((key) => (
-            <div key={key} style={{
-              borderTop: '2px solid #3f51b5', 
-              borderBottom: '2px solid #3f51b5', 
-              padding: '16px',
-              margin: '8px 0',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}>
-              <div>
-                <strong>{key}</strong>
-                <p>Tagalog: {data[key].Tagalog}</p>
-                <p>Bikol: {data[key].Bikol}</p>
-              </div>
-              <div>
-                <button
-                  style={{
-                    marginRight: '8px',
-                    padding: '8px 16px',
-                    backgroundColor: '#3f51b5',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer'
-                  }}
-                  onClick={() => handleShow('edit', { key, ...data[key] })} // Open modal for edit
-                >
-                  Edit
-                </button>
-                <button
-                  style={{
-                    padding: '8px 16px',
-                    backgroundColor: '#f44336',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer'
-                  }}
-                  onClick={() => handleShow('delete', { key, ...data[key] })} // Open modal for delete
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p>No matching data found for "{searchTerm}".</p>
-        )}
-      </div>
+      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <thead>
+          <tr>
+            <th style={{ padding: '8px', background: 'rgba(85, 75, 205, 0.6)', color: '#ffff' }}>Filipino</th>
+            <th style={{padding: '8px', background: 'rgba(85, 75, 205, 0.6)', color: '#ffff'  }}>{language}</th>
+            <th style={{padding: '8px', background: 'rgba(85, 75, 205, 0.6)', color: '#ffff'  }}>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredData.length > 0 ? (
+            filteredData.map((key) => (
+              <tr key={key}>
+              <td style={{ border: '.1px solid rgba(85, 75, 205, 0.1)', padding: '8px' }}>
+                {data[key].Tagalog}
+              </td>
+              <td style={{ border: '.1px solid rgba(85, 75, 205, 0.1)', padding: '8px'}}>
+                {data[key].Bikol}
+              </td>
+              <td style={{ border: '.1px solid rgba(85, 75, 205, 0.15)', padding: '8px', textAlign: 'center' }}>
+  <div style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}>
+    {/* <button
+      style={{
+        padding: '8px',
+        backgroundColor: '#3f51b5',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        height: '32px',
+        width: '32px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}
+      onClick={() => handleShow('edit', { key, ...data[key] })}
+    >
+      <i
+        style={{
+          height: '1rem',
+          width: '1rem',
+          display: 'flex', // Ensure the icon itself is treated as a flex container
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}
+        className="material-symbols-outlined icon"
+      >
+        edit
+      </i>
+    </button> */}
+    <button
+      style={{
+        padding: '8px',
+        backgroundColor: '#f44336',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+        height: '32px',
+        width: '32px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center' 
+      }}
+      onClick={() => handleShow('delete', { key, ...data[key] })}
+    >
+      <i
+        style={{
+          height: '1rem',
+          width: '1rem',
+          display: 'flex', 
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}
+        className="material-symbols-outlined icon"
+      >
+        delete
+      </i>
+    </button>
+  </div>
+</td>
+
+            </tr>
+            
+            ))
+          ) : (
+            <tr>
+              <td colSpan="3" style={{ textAlign: 'center', padding: '16px' }}>
+                No matching data found for "{searchTerm}".
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
 
       <h3>Translation Paths</h3>
       <ul>
@@ -230,7 +277,6 @@ const Lib = ({ email, paths, language, unapprovedCount }) => {
         )}
       </ul>
 
-      {/* Main Modal Structure */}
       <Modal show={showModal} onHide={handleClose} backdrop="static" keyboard={false}>
         <Modal.Header closeButton>
           <Modal.Title>
@@ -239,47 +285,59 @@ const Lib = ({ email, paths, language, unapprovedCount }) => {
         </Modal.Header>
         <Modal.Body>
           {modalAction === 'delete' ? (
-            <p>Are you sure you want to delete <strong>{currentItem?.key}</strong>?</p>
+            <>
+              <p>Are you sure you want to delete the entry?</p>
+              <strong>Tagalog:</strong> {currentItem?.Tagalog} <br />
+              <strong>Bikol:</strong> {currentItem?.Bikol}
+            </>
           ) : (
-            <div>
-              <p><strong>{currentItem?.key}</strong></p>
-              <div>
+            <>
+              <div className="form-group">
                 <label>Tagalog:</label>
                 <input
                   type="text"
                   value={updatedTagalog}
-                  onChange={(e) => setUpdatedTagalog(e.target.value)} 
+                  onChange={(e) => setUpdatedTagalog(e.target.value)}
+                  className="form-control"
                 />
               </div>
-              <div>
+              <div className="form-group">
                 <label>Bikol:</label>
                 <input
                   type="text"
                   value={updatedBikol}
-                  onChange={(e) => setUpdatedBikol(e.target.value)} // Update Bikol input
+                  onChange={(e) => setUpdatedBikol(e.target.value)}
+                  className="form-control"
                 />
               </div>
-            </div>
+            </>
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>Close</Button>
+          <Button variant="secondary" onClick={handleClose}>
+            Cancel
+          </Button>
           {modalAction === 'delete' ? (
-            <Button variant="danger" onClick={handleDelete}>Delete</Button>
+            <Button variant="danger" onClick={handleDelete}>
+              Delete
+            </Button>
           ) : (
-            <Button variant="primary" onClick={handleSaveChanges}>Save Changes</Button>
+            <Button variant="primary" onClick={handleSaveChanges}>
+              Save Changes
+            </Button>
           )}
         </Modal.Footer>
       </Modal>
 
-      {/* Success Modal for confirmation */}
+      {/* Success Modal */}
       <Modal show={showSuccessModal} onHide={() => setShowSuccessModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>Success</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>{successMessage}</Modal.Body>
+        <Modal.Body>
+          <p>{successMessage}</p>
+        </Modal.Body>
         <Modal.Footer>
-          <Button variant="primary" onClick={() => setShowSuccessModal(false)}>Close</Button>
+          <Button variant="primary" onClick={() => setShowSuccessModal(false)}>
+            Close
+          </Button>
         </Modal.Footer>
       </Modal>
     </div>

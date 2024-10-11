@@ -14,47 +14,47 @@ function Sidebar() {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  useEffect(() => {
-    const toggle = document.querySelector(".toggle");
-    const searchBTN = document.querySelector(".search-box");
-    const sidebar = document.querySelector(".sidebar");
-    const content = document.querySelector(".content");
-    const toolbar = document.querySelector(".toolbar");
-    // const iconSearch = document.querySelector(".iconSearch");
+  // useEffect(() => {
+  //   // const toggle = document.querySelector(".toggle");
+  //   const searchBTN = document.querySelector(".search-box");
+  //   const sidebar = document.querySelector(".sidebar");
+  //   const content = document.querySelector(".content");
+  //   const toolbar = document.querySelector(".toolbar");
+  //   // const iconSearch = document.querySelector(".iconSearch");
 
-    const handleToggleClick = () => {
-      sidebar.classList.toggle("close");
-      if (sidebar.classList.contains("close")) {
-        content.style.marginLeft = "5%";
-        content.style.width = "95%";
-        toolbar.style.width = "95%";
-        // iconSearch.style.opacity = "1";
-      } else {
-        content.style.marginLeft = "12%";
-        toolbar.style.width = "88%";
-        content.style.width = "88%";
+  //   // const handleToggleClick = () => {
+  //   //   sidebar.classList.toggle("close");
+  //   //   if (sidebar.classList.contains("close")) {
+  //   //     content.style.marginLeft = "5%";
+  //   //     content.style.width = "95%";
+  //   //     toolbar.style.width = "95%";
+  //   //     // iconSearch.style.opacity = "1";
+  //   //   } else {
+  //   //     content.style.marginLeft = "12%";
+  //   //     toolbar.style.width = "88%";
+  //   //     content.style.width = "88%";
 
-        // iconSearch.style.opacity = "0";
-      }
-    };
+  //   //     // iconSearch.style.opacity = "0";
+  //   //   }
+  //   // };
 
-    // const handleSearchClick = () => {
-    //   sidebar.classList.remove("close");
-    //   content.style.marginLeft = "12%";
-    //   toolbar.style.width = "88%";
-    //   iconSearch.style.opacity = "0";
-    // };
+  //   // const handleSearchClick = () => {
+  //   //   sidebar.classList.remove("close");
+  //   //   content.style.marginLeft = "12%";
+  //   //   toolbar.style.width = "88%";
+  //   //   iconSearch.style.opacity = "0";
+  //   // };
 
-    toggle.addEventListener("click", handleToggleClick);
-    // searchBTN.addEventListener("click", handleSearchClick);
+  //   // toggle.addEventListener("click", handleToggleClick);
+  //   // searchBTN.addEventListener("click", handleSearchClick);
 
-    return () => {
-      toggle.removeEventListener("click", handleToggleClick);
-      // searchBTN.removeEventListener("click", handleSearchClick);
-    };
-  }, []);
+  //   return () => {
+  //     toggle.removeEventListener("click", handleToggleClick);
+  //     // searchBTN.removeEventListener("click", handleSearchClick);
+  //   };
+  // }, []);
   return (
-    <nav className="sidebar close">
+    <nav className="sidebar">
       <header>
         <div className="image-text" onClick={handleShow}>
           <span className="image">
@@ -65,7 +65,7 @@ function Sidebar() {
             <span className="tag">Sentro ng Wika at Kultura</span>
           </div>
         </div>
-        <i className="material-symbols-outlined toggle">chevron_right</i>
+        {/* <i className="material-symbols-outlined">chevron_right</i> */}
       </header>
       <div className="menu-bar">
         <div className="menu">
